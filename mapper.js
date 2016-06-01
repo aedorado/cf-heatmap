@@ -1,3 +1,64 @@
+  function apicall(user) {   
+    document.getElementById('heat-map-div').innerHTML = '';
+    var url = 'http://codeforces.com/api/user.status?handle=' + user;
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+      if (xhttp.readyState == 4 && xhttp.status == 200) {
+        if ((JSON.parse(xhttp.responseText)).status === "OK") {
+          var results = (JSON.parse(xhttp.responseText)).result;
+          process(results);
+      } else {
+        document.getElementById('heat-map-div').innerHTML = 'Call failed.';
+      }
+  }
+};
+xhttp.open("GET", url, true);
+xhttp.send();
+}
+
+function process(results) {
+    var count = {}; 
+    var maxsub = 0;
+    var minYear, maxYear;
+
+    maxYear = (new Date(results[0].creationTimeSeconds * 1000)).getUTCFullYear();
+    minYear = (new Date(results[results.length - 1].creationTimeSeconds * 1000)).getUTCFullYear();
+    console.log(maxYear, minYear);
+
+    results = results.filter(function(result) {
+      return result.verdict === "OK";
+  });
+
+    results.forEach(function(result) {
+      var date = new Date(result.creationTimeSeconds * 1000);
+      var year = date.getUTCFullYear();
+      var month = date.getUTCMonth();
+      if (month < 10) {
+        month = '0' + (month + 1);
+    }
+    var day = date.getUTCDate();
+    if (day < 10) {
+        day = '0' + day;
+    }
+        // console.log(year+' '+month+' '+day);
+        count[year+''+month+''+day] = (count[year+''+month+''+day] + 1) || 1;
+    });
+    console.log(count);
+    maxsub = Math.max.apply(maxsub, Object.keys(count).map(function(e) {
+      return count[e];
+  }));
+    document.getElementById('loading-gif').style.display = 'none';
+    mapdata(count, maxsub, minYear, maxYear);
+}
+
+document.getElementById('username-input').addEventListener('keypress', function(e) {
+    if (e.keyCode == 13) {
+      e.preventDefault();
+      document.getElementById('loading-gif').style.display = 'inline';
+      apicall(this.value);
+  }
+}, false);
+
 function mapdata(count, maxsub, minYear, maxYear) {
     var width = 900,
     height = 105,
