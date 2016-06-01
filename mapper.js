@@ -1,8 +1,9 @@
-function mapdata() {var width = 900,
-	height = 105,
+function mapdata(count, maxsub, minYear, maxYear) {
+    var width = 900,
+    height = 105,
     cellSize = 12; // cell size
-    week_days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat']
-    month = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
+    week_days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+    month = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 
     var day = d3.time.format("%w"),
     week = d3.time.format("%U"),
@@ -10,7 +11,7 @@ function mapdata() {var width = 900,
     format = d3.time.format("%Y%m%d");
     parseDate = d3.time.format("%Y%m%d").parse;
 
-    var color = d3.scale.linear().range(["#d6e685", '#1e6823']).domain([1, maxsub]);
+    var color = d3.scale.linear().range(["#d6e685", '#A50026']).domain([1, maxsub]);
     
     var svg = d3.select(".calender-map").selectAll("svg")
     .data(d3.range(minYear, maxYear + 1))
@@ -27,8 +28,7 @@ function mapdata() {var width = 900,
     .style("text-anchor", "middle")
     .text(function(d) { return d; });
 
-    for (var i=0; i<7; i++)
-    {    
+    for (var i=0; i<7; i++) {    
     	svg.append("text")
     	.attr("transform", "translate(-5," + cellSize*(i+1) + ")")
     	.style("text-anchor", "end")
@@ -55,27 +55,39 @@ function mapdata() {var width = 900,
     .attr("transform", function(d, i) { return "translate(" + (((i+1) * 50)+8) + ",0)"; });
 
     legend.append("text")
-    .attr("class", function(d,i){ return month[i] })
+    .attr("class", function(d,i){ return month[i]; })
     .style("text-anchor", "end")
     .attr("dy", "-.25em")
-    .text(function(d,i){ return month[i] });
+    .text(function(d,i){ return month[i]; });
 
     svg.selectAll(".month")
     .data(function(d) { return d3.time.months(new Date(d, 0, 1), new Date(d + 1, 0, 1)); })
     .enter().append("path")
     .attr("class", "month")
-    .attr("id", function(d,i){ return month[i] })
+    .attr("id", function(d,i){ return month[i]; })
     .attr("d", monthPath);
 
-      data = count;
 
-      rect.filter(function(d) { return d in data; })
-      .attr("fill", function(d) { 
-        // console.log(data[d]);
-        return color(data[d]); })
-      .attr("data-title", function(d) { return "value : "+ data[d]});   
-      $("rect").tooltip({container: 'body', html: true, placement:'top'}); 
+    var tooltip = d3.select('body').append('div')
+    .attr('class', 'tooltip');
 
+    d3.selectAll('rect').on('mouseover', function(d) {
+        if (this.getAttribute('data-title') != null) {
+
+          tooltip.style('display', 'block');
+          tooltip.html(this.getAttribute('data-title'))
+          .style('left', (d3.event.pageX + 5) + 'px')
+          .style('top', (d3.event.pageY) + 'px');
+      }
+  })
+    .on('mouseout', function(d) {
+      tooltip.style('display', 'none');
+  });
+
+    data = count;
+    rect.filter(function(d) { return d in data; })
+    .attr("fill", function(d) { return color(data[d]); })
+    .attr("data-title", function(d) { return "Submissions : " + data[d]});
 
     function monthPath(t0) {
     	var t1 = new Date(t0.getFullYear(), t0.getMonth() + 1, 0),
