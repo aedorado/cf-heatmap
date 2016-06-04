@@ -5,7 +5,7 @@
   <script type="text/javascript" src="d3.min.js"></script>
   <style>
   body {
-    font: 10px sans-serif;
+    font: 10px Tahoma;
     text-align: center;
   }
 
@@ -25,8 +25,8 @@
     stroke-width: 2px;
   }
   .tooltip {
-    height: 22px;
-    padding: 2px;
+    height: 18px;
+    padding: 3px;
     width: 120px;
     background-color: black;
     display: none;
@@ -48,6 +48,10 @@
     width: 60%;
     margin-left: 20%;
     margin-bottom: 24px;
+  }
+
+  #stats {
+    font-size: 12px;
   }
 
   /* 
@@ -82,11 +86,11 @@
   <a href="https://github.com/aedorado/cf-heatmap"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://camo.githubusercontent.com/365986a132ccd6a44c23a9169022c0b5c890c387/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f7265645f6161303030302e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_red_aa0000.png"></a>
   <h2>Codeforces Heatmap</h2>
   <form role="form">
-    <input type="text" id="username-input" class="form-control" placeholder="Type existing codeforces username and press enter..">
+    <input type="text" id="username-input" class="form-control" placeholder="Type existing codeforces handle and press enter..">
   </form>
-  <img id="loading-gif" src="load.svg" alt="">
+  <div id="stats"></div>
   <div id="heat-map-div" class="calender-map">
   </div>
+  <img id="loading-gif" src="load.svg" alt="">
   <script type="text/javascript" src="mapper.js"></script>
-
 </body></html>
