@@ -27,7 +27,7 @@
   .tooltip {
     height: 18px;
     padding: 3px;
-    width: 120px;
+    width: 160px;
     background-color: black;
     display: none;
     color:white;
@@ -44,13 +44,22 @@
     transition: all 1s ease;
   }
  
+
+  #stats {
+    font-size: 10px;
+  }
+
+  form {
+    margin-bottom: 15px;
+  }
+
   #username-input {
     width: 60%;
     margin-left: 20%;
-    margin-bottom: 24px;
+    margin-bottom: 10px;
   }
 
-  #stats {
+  label {
     font-size: 12px;
   }
 
@@ -87,10 +96,15 @@
   <h2>Codeforces Heatmap</h2>
   <form role="form">
     <input type="text" id="username-input" class="form-control" placeholder="Type existing codeforces handle and press enter..">
+    <label><input type="radio" class="participantTypeRadio" name="participantType" value="A" selected>All</label>
+    <label><input type="radio" class="participantTypeRadio" name="participantType" value="C">Contest</label>
+    <label><input type="radio" class="participantTypeRadio" name="participantType" value="P">Practice</label>
+    <label><input type="radio" class="participantTypeRadio" name="participantType" value="V">Virtual</label>
   </form>
   <div id="stats"></div>
   <div id="heat-map-div" class="calender-map">
   </div>
   <img id="loading-gif" src="load.svg" alt="">
+  <script type="text/javascript" src="filters.js"></script>
   <script type="text/javascript" src="mapper.js"></script>
 </body></html>

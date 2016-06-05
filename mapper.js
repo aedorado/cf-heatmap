@@ -1,6 +1,9 @@
+var results;
+var user;
 
-function apicall(user) {
+function apicall(username) {
     var success = false;
+    user = username
     window.location.hash = '#' + user;
     document.getElementById('loading-gif').style.display = 'inline';
     document.getElementById('heat-map-div').innerHTML = '';
@@ -11,7 +14,7 @@ function apicall(user) {
       if (xhttp.readyState == 4 && xhttp.status == 200) {
           if ((JSON.parse(xhttp.responseText)).status === "OK") {
                 success = true;
-                var results = (JSON.parse(xhttp.responseText)).result;
+                results = (JSON.parse(xhttp.responseText)).result;
                 process(results);
           } else if (xhttp.status == 400) {
               document.getElementById('heat-map-div').innerHTML = 'Call failed.';
@@ -56,9 +59,8 @@ function process(results) {
     maxsub = Math.max.apply(maxsub, Object.keys(count).map(function(e) {
         return count[e];
     }));
-    document.getElementById('stats').innerHTML = 'Max Submissions: ' + maxsub;
     document.getElementById('loading-gif').style.display = 'none';
-    mapdata(count, maxsub, minYear, maxYear);
+    mapdata(count, minYear, maxYear);
 }
 
 document.getElementById('username-input').addEventListener('keypress', function(e) {
@@ -68,7 +70,7 @@ document.getElementById('username-input').addEventListener('keypress', function(
     }
 }, false);
 
-function mapdata(count, maxsub, minYear, maxYear) {
+function mapdata(count, minYear, maxYear) {
     var width = 900,
         height = 105,
         cellSize = 12; // cell size
@@ -81,7 +83,6 @@ function mapdata(count, maxsub, minYear, maxYear) {
         format = d3.time.format("%Y%m%d");
     parseDate = d3.time.format("%Y%m%d").parse;
 
-    var color = d3.scale.linear().range(["#d6e685", '#A50026']).domain([1, maxsub]);
 
     var svg = d3.select(".calender-map").selectAll("svg")
         .data(d3.range(minYear, maxYear + 1))
@@ -110,7 +111,7 @@ function mapdata(count, maxsub, minYear, maxYear) {
             });
     }
 
-    var rect = svg.selectAll(".day")
+    rect = svg.selectAll(".day")
         .data(function(d) {
             return d3.time.days(new Date(d, 0, 1), new Date(d + 1, 0, 1));
         })
@@ -174,16 +175,7 @@ function mapdata(count, maxsub, minYear, maxYear) {
             tooltip.style('display', 'none');
         });
 
-    data = count;
-    rect.filter(function(d) {
-            return d in data;
-        })
-        .attr("fill", function(d) {
-            return color(data[d]);
-        })
-        .attr("data-title", function(d) {
-            return "Submissions : " + data[d]
-        });
+    plot(count);
 
     function monthPath(t0) {
         var t1 = new Date(t0.getFullYear(), t0.getMonth() + 1, 0),
@@ -199,6 +191,80 @@ function mapdata(count, maxsub, minYear, maxYear) {
     }
 }
 
+function getStats(data) {
+    var stats = [];
+    stats['maxsub'] = 0;
+    stats['maxsub'] = Math.max.apply(stats['maxsub'], Object.keys(data).map(function(e) {
+        return data[e];
+    }));
+    
+    stats['sum'] = 0;
+    for (key in data) {
+        stats['sum'] += data[key];
+    }
+    stats['avg'] = (stats['sum'] / Object.keys(data).length).toPrecision(4);
+    stats['numdays'] = Object.keys(data).length;
+
+    document.getElementById('stats').innerHTML = user + ' has made ' + stats['sum'] + ' submissions over a period of ' + stats['numdays'] + ' different days.';
+    document.getElementById('stats').innerHTML += '<br>Average number of submissions are ' + stats['avg'];
+    document.getElementById('stats').innerHTML += '<br>Max Submissions in a day are ' + stats['maxsub'];
+    return stats;
+}
+
+// plot data on the map
+function plot(data) {
+    // bleach();
+    var stats = getStats(data);
+    // var color = d3.scale.linear().range(["#d6e685", '#a50026']).domain([1, 10]);  // stats['maxsub']
+    var color = d3.scale.linear().range(["#d6e685", '#A50026']).domain([1, stats['maxsub']]);
+    // console.log(data, stats);
+    // console.log(rect.filter(function(d) {
+    //     return d in data;
+    // }));
+    // console.log(rect);
+    
+
+   // rect.transition().filter(function(d) {
+   //      return !(d in data);
+   //  })
+   //  .attr("fill", function(d) {
+   //      return 'white';
+   //  })
+   //  .attr("data-title", function(d) {
+   //      return null;
+   //  })
+   //  .delay(function(d, i) {
+   //      return i * 10;
+   //  }); 
+
+    rect.transition().duration(750).
+    attr("fill", function(d) {
+        return (d in data) ? color(data[d]): 'white';
+    })
+    .attr("data-title", function(d) {
+        return (d in data) ? (d.substring(6) + '/' + d.substring(4, 6)) + " Submissions : " + data[d]: null;
+    })
+    // .delay(function(d, i) {
+    //     return i * 4;
+    // });
+
+}
+
 if (window.location.hash) {
     apicall(window.location.hash.substring(1));
+}
+
+var radiobuttons = document.querySelectorAll('input[type=radio]');
+for (var i = 0; i < radiobuttons.length; i++) {
+    radiobuttons[i].addEventListener('click', function() {
+        if (this.value === 'A') {
+            plot(filterNormally(results));
+        } else if (this.value == 'C') {
+            plot(filterParticipantType(results, "CONTESTANT"));
+        } else if (this.value == 'P') {
+            plot(filterParticipantType(results, "PRACTICE"));
+        } else if (this.value == 'V') {
+            plot(filterParticipantType(results, "VIRTUAL"));
+        }
+    }, false);
 }
