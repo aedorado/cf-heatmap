@@ -175,6 +175,7 @@ function mapdata(count, minYear, maxYear) {
             tooltip.style('display', 'none');
         });
 
+    document.querySelector('input[type=radio]').checked = true;
     plot(count);
 
     function monthPath(t0) {
@@ -213,29 +214,8 @@ function getStats(data) {
 
 // plot data on the map
 function plot(data) {
-    // bleach();
     var stats = getStats(data);
-    // var color = d3.scale.linear().range(["#d6e685", '#a50026']).domain([1, 10]);  // stats['maxsub']
     var color = d3.scale.linear().range(["#d6e685", '#A50026']).domain([1, stats['maxsub']]);
-    // console.log(data, stats);
-    // console.log(rect.filter(function(d) {
-    //     return d in data;
-    // }));
-    // console.log(rect);
-    
-
-   // rect.transition().filter(function(d) {
-   //      return !(d in data);
-   //  })
-   //  .attr("fill", function(d) {
-   //      return 'white';
-   //  })
-   //  .attr("data-title", function(d) {
-   //      return null;
-   //  })
-   //  .delay(function(d, i) {
-   //      return i * 10;
-   //  }); 
 
     rect.transition().duration(750).
     attr("fill", function(d) {
@@ -244,9 +224,6 @@ function plot(data) {
     .attr("data-title", function(d) {
         return (d in data) ? (d.substring(6) + '/' + d.substring(4, 6)) + " Submissions: " + data[d]: null;
     })
-    // .delay(function(d, i) {
-    //     return i * 4;
-    // });
 
 }
 
