@@ -242,7 +242,7 @@ function plot(data) {
         return (d in data) ? color(data[d]): 'white';
     })
     .attr("data-title", function(d) {
-        return (d in data) ? (d.substring(6) + '/' + d.substring(4, 6)) + " Submissions : " + data[d]: null;
+        return (d in data) ? (d.substring(6) + '/' + d.substring(4, 6)) + " Submissions: " + data[d]: null;
     })
     // .delay(function(d, i) {
     //     return i * 4;
