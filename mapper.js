@@ -33,7 +33,6 @@ function apicall(username) {
 
 function process(results) {
     var count = {};
-    var maxsub = 0;
     var minYear, maxYear;
 
     maxYear = (new Date(results[0].creationTimeSeconds * 1000)).getUTCFullYear();
@@ -47,18 +46,18 @@ function process(results) {
         var date = new Date(result.creationTimeSeconds * 1000);
         var year = date.getUTCFullYear();
         var month = date.getUTCMonth();
-        if (month < 10) {
+        if (month < 9) {
             month = '0' + (month + 1);
+        } else {
+            month = month + 1;
         }
-        var day = date.getUTCDate();
+        var day = date.getDate();
         if (day < 10) {
             day = '0' + day;
         }
         count[year + '' + month + '' + day] = (count[year + '' + month + '' + day] + 1) || 1;
     });
-    maxsub = Math.max.apply(maxsub, Object.keys(count).map(function(e) {
-        return count[e];
-    }));
+
     document.getElementById('loading-gif').style.display = 'none';
     mapdata(count, minYear, maxYear);
 }

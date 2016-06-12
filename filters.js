@@ -5,8 +5,10 @@ function filterNormally(results) {
             var date = new Date(result.creationTimeSeconds * 1000);
             var year = date.getUTCFullYear();
             var month = date.getUTCMonth();
-            if (month < 10) {
+            if (month < 9) {
                 month = '0' + (month + 1);
+            } else {
+                month = month + 1;
             }
             var day = date.getUTCDate();
             if (day < 10) {
@@ -25,8 +27,10 @@ function filterParticipantType(results, type) {
             var date = new Date(result.creationTimeSeconds * 1000);
             var year = date.getUTCFullYear();
             var month = date.getUTCMonth();
-            if (month < 10) {
+            if (month < 9) {
                 month = '0' + (month + 1);
+            } else {
+                month = month + 1;
             }
             var day = date.getUTCDate();
             if (day < 10) {
