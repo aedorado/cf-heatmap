@@ -104,11 +104,16 @@
     <label><input type="radio" class="participantTypeRadio" name="participantType" value="C">Contest</label>
     <label><input type="radio" class="participantTypeRadio" name="participantType" value="P">Practice</label>
     <label><input type="radio" class="participantTypeRadio" name="participantType" value="V">Virtual</label>
+    <select name="line-year" id="line-year">
+      <option value="2016">2016</option>
+      <option value="2015">2015</option>
+    </select>
   </form>
   <div id="stats"></div>
-  <div id="heat-map-div" class="calender-map">
-  </div>
   <img id="loading-gif" src="load.svg" alt="">
+  <div id="linechart-div"></div>
+  <div id="heat-map-div" class="calender-map"></div>
   <script type="text/javascript" src="filters.js"></script>
   <script type="text/javascript" src="mapper.js"></script>
+  <script type="text/javascript" src="linechart.js"></script>
 </body></html>

@@ -7,6 +7,7 @@ function apicall(username) {
     window.location.hash = '#' + user;
     document.getElementById('loading-gif').style.display = 'inline';
     document.getElementById('heat-map-div').innerHTML = '';
+    document.getElementById('linechart-div').innerHTML = '';
     document.getElementById('stats').innerHTML = '';
     var url = 'http://codeforces.com/api/user.status?handle=' + user;
     var xhttp = new XMLHttpRequest();
@@ -16,6 +17,7 @@ function apicall(username) {
                 success = true;
                 results = (JSON.parse(xhttp.responseText)).result;
                 process(results);
+                linechart(results);
           } else if (xhttp.status == 400) {
               document.getElementById('heat-map-div').innerHTML = 'Call failed.';
           }
@@ -175,7 +177,7 @@ function mapdata(count, minYear, maxYear) {
         });
 
     document.querySelector('input[type=radio]').checked = true;
-    plot(count);
+    plotHM(count);
 
     function monthPath(t0) {
         var t1 = new Date(t0.getFullYear(), t0.getMonth() + 1, 0),
@@ -212,7 +214,7 @@ function getStats(data) {
 }
 
 // plot data on the map
-function plot(data) {
+function plotHM(data) {
     var stats = getStats(data);
     var color = d3.scale.linear().range(["#d6e685", '#A50026']).domain([1, stats['maxsub']]);
 
@@ -234,13 +236,13 @@ var radiobuttons = document.querySelectorAll('input[type=radio]');
 for (var i = 0; i < radiobuttons.length; i++) {
     radiobuttons[i].addEventListener('click', function() {
         if (this.value === 'A') {
-            plot(filterNormally(results));
+            plotHM(filterNormally(results));
         } else if (this.value == 'C') {
-            plot(filterParticipantType(results, "CONTESTANT"));
+            plotHM(filterParticipantType(results, "CONTESTANT"));
         } else if (this.value == 'P') {
-            plot(filterParticipantType(results, "PRACTICE"));
+            plotHM(filterParticipantType(results, "PRACTICE"));
         } else if (this.value == 'V') {
-            plot(filterParticipantType(results, "VIRTUAL"));
+            plotHM(filterParticipantType(results, "VIRTUAL"));
         }
     }, false);
 }
