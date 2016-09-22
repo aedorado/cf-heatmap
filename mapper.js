@@ -15,7 +15,6 @@ function apicall(username) {
     xhttp.onreadystatechange = function() {
       if (xhttp.readyState == 4 && xhttp.status == 200) {
           if ((JSON.parse(xhttp.responseText)).status === "OK") {
-                document.getElementById('heat-map-div').innerHTML = 'Data Fetched. Crunching numbers now.';
                 success = true;
                 results = (JSON.parse(xhttp.responseText)).result;
                 process(results);
@@ -219,15 +218,12 @@ function getStats(data) {
 function plotHM(data) {
     var stats = getStats(data);
     var color = d3.scale.linear().range(["#d6e685", '#1e6823']).domain([1, stats['maxsub']]);
-
     rect.transition().duration(750).
     attr("fill", function(d) {
         return (d in data) ? color(data[d]): 'white';
-    })
-    .attr("data-title", function(d) {
+    }).attr("data-title", function(d) {
         return (d in data) ? (d.substring(6) + '/' + d.substring(4, 6)) + " Submissions: " + data[d]: null;
-    })
-
+    });
 }
 
 if (window.location.hash) {

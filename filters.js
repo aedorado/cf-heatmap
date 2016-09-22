@@ -56,7 +56,7 @@ function weekifyData(results, type='') {
         return Math.ceil((((this - onejan) / 86400000) + onejan.getDay() + 1) / 7);
     }
 
-    var attachYearToLineYear = function(year) {
+    var attachYearToLineYear = function(year) {     // create drop-down menu
         var op = document.createElement('option');
         op.setAttribute('value', year);
         op.appendChild(document.createTextNode(year));

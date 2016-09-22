@@ -23,7 +23,7 @@ function createLCStructure(data) {
                 })]).range([height, 0]);
 
   	var xScale = d3.scale.linear()
-                .domain([0, 54])
+                .domain([0, 53])
                 .range([0, width]);
 
     var vAxis = d3.svg.axis().scale(yScale).orient('left').ticks(10);
@@ -38,7 +38,7 @@ function createLCStructure(data) {
     vGuide.selectAll('line').style({stroke: '#000'});
 
     lineFunction = d3.svg.line()
-                    .x(function(d, i) { console.log(i, d);return xScale(i); })
+                    .x(function(d, i) { return xScale(i); })
                     .y(function(d, i) { return yScale(d); })
                     .interpolate("linear");
 
@@ -49,19 +49,20 @@ function createLCStructure(data) {
                         .attr("stroke", "#000")
                         .attr("stroke-width", 3)
                         .attr("fill", "none");
-    var totalLength = lineGraph.node().getTotalLength();
+    totalLength = lineGraph.node().getTotalLength();
+    totalLength = 4000;
 
     lineGraph
       .attr("stroke-dasharray", totalLength + " " + totalLength)
       .attr("stroke-dashoffset", totalLength)
       .transition()
-      .duration(3000)
+      .duration(1000)
       .ease("quad")
       .attr("stroke-dashoffset", 0);
 
     document.getElementById('line-year').addEventListener('change', populateLineChartWithData, false);
     function populateLineChartWithData() {
-  		lineGraph.transition().attr("d", lineFunction(data[this.value]))
+      lineGraph.transition().attr("d", lineFunction(data[this.value]));
   	}
 
 }
