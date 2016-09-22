@@ -8,12 +8,14 @@ function apicall(username) {
     document.getElementById('loading-gif').style.display = 'inline';
     document.getElementById('heat-map-div').innerHTML = '';
     document.getElementById('linechart-div').innerHTML = '';
+    document.getElementById('line-year').innerHTML = '';
     document.getElementById('stats').innerHTML = '';
     var url = 'http://codeforces.com/api/user.status?handle=' + user;
     var xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function() {
       if (xhttp.readyState == 4 && xhttp.status == 200) {
           if ((JSON.parse(xhttp.responseText)).status === "OK") {
+                document.getElementById('heat-map-div').innerHTML = 'Data Fetched. Crunching numbers now.';
                 success = true;
                 results = (JSON.parse(xhttp.responseText)).result;
                 process(results);
@@ -216,7 +218,7 @@ function getStats(data) {
 // plot data on the map
 function plotHM(data) {
     var stats = getStats(data);
-    var color = d3.scale.linear().range(["#d6e685", '#A50026']).domain([1, stats['maxsub']]);
+    var color = d3.scale.linear().range(["#d6e685", '#1e6823']).domain([1, stats['maxsub']]);
 
     rect.transition().duration(750).
     attr("fill", function(d) {

@@ -1,13 +1,14 @@
 // createLCStructure();
 
 function linechart(data) {
-	var weeklyData = weekifyData(data);
-	createLCStructure(weeklyData);
+	createLCStructure(data);
 	// console.log(weeklyData);
 }
 
-function createLCStructure(data, year=2015) {
+function createLCStructure(data) {
 
+  data = weekifyData(data);
+  console.log(data);
 	var margin = {top: 40, right: 40, bottom: 40, left: 40};
 	var height = 320 - margin.top - margin.bottom,
 		width = 1000 - margin.left - margin.right;
@@ -18,7 +19,7 @@ function createLCStructure(data, year=2015) {
 
 	var yScale = d3.scale.linear()
                 .domain([0, d3.max(data, function(d) {
-					return ((d === undefined) ? 0 : Math.max.apply(null, d));
+					         return ((d === undefined) ? 0 : Math.max.apply(null, d));
                 })]).range([height, 0]);
 
   	var xScale = d3.scale.linear()
@@ -37,14 +38,14 @@ function createLCStructure(data, year=2015) {
     vGuide.selectAll('line').style({stroke: '#000'});
 
     lineFunction = d3.svg.line()
-                    .x(function(d, i) { return xScale(i); })
+                    .x(function(d, i) { console.log(i, d);return xScale(i); })
                     .y(function(d, i) { return yScale(d); })
                     .interpolate("linear");
 
     var svgGroup = svgContainer.append('g').attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
     						
     lineGraph = svgGroup.append("path")
-                        .attr("d", lineFunction(data[year]))
+                        .attr("d", lineFunction(data[new Date().getUTCFullYear()]))
                         .attr("stroke", "#000")
                         .attr("stroke-width", 3)
                         .attr("fill", "none");
@@ -60,7 +61,7 @@ function createLCStructure(data, year=2015) {
 
     document.getElementById('line-year').addEventListener('change', populateLineChartWithData, false);
     function populateLineChartWithData() {
-		lineGraph.transition().attr("d", lineFunction(data[this.value]))
-	}
+  		lineGraph.transition().attr("d", lineFunction(data[this.value]))
+  	}
 
 }
