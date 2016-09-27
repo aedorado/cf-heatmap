@@ -1,8 +1,5 @@
-// createLCStructure();
-
 function linechart(data) {
 	createLCStructure(data);
-	// console.log(weeklyData);
 }
 
 function createLCStructure(data) {
@@ -55,14 +52,17 @@ function createLCStructure(data) {
         .ease("quad")
         .attr("stroke-dashoffset", 0);
 
-  circles = svgGroup.selectAll("circle")                                    
+  var ctooltip = d3.select('#linechart-div').append('div')
+                  .attr('class', 'tooltip');
+
+  var circles = svgGroup.selectAll("circle")                                    
           .data(data[new Date().getUTCFullYear()])
           .enter().append("circle")                            
-          .attr("r", 4)    
+          .attr("r", 4)
           .attr("z-index", 100)
           .attr("cx", function(d, i) { return xScale(i); })
           .attr("cy", function(d, i) { return yScale(d); })// - yScale(d[1] * 100 / (i + 1)); })
-           // Tooltip stuff after this
+          .attr("data-title", function(d, i) { return "Week: " + i + ", Sub: " + d; })
           .style({stroke:'#fff', visbility: 0})
           
   circles.on("mouseover", function(d, i) {
@@ -82,53 +82,26 @@ function createLCStructure(data) {
                 .attr("class", "tooltip-line")
                 .attr("stroke", "#1e6823")
                 .attr("stroke-width", 1);
+              if (this.getAttribute('data-title') != null) {
+
+                ctooltip.style('display', 'block');
+                ctooltip.html(this.getAttribute('data-title'))
+                    .style('left', (d3.event.pageX + 5) + 'px')
+                    .style('top', (d3.event.pageY) + 'px');
+              }
           })
           .on("mouseout", function(d, i) {
             tooltipLineX.remove('tooltipLineX');
             tooltipLineY.remove('tooltipLineY');
-              // tooltip.style('display', 'none');
-              // d3.select('path#' + name.replace(' ', '-')).attr("stroke-width", 2);
           });
-
-    // var focus = linesvg.append("g").style("display", "none");
-    // focus.append("circle")
-    //     .attr("class", "y")
-    //     .style("fill", "none")
-    //     .style("stroke", "blue")
-    //     .attr("r", 4)
-    // // append the rectangle to capture mouse
-    // linesvg.append("rect")
-    //     .attr("width", width)
-    //     .attr("height", height)
-    //     .style("fill", "red")
-    //     .style("pointer-events", "all")
-    //     .on("mouseover", function() { focus.style("display", null); })
-    //     .on("mouseout", function() { focus.style("display", "none"); })
-    //     .on("mousemove", mousemove);       
-
-    //     var bisectData = d3.bisector(function(d) {
-
-    //     });
-
-    //     function mousemove() {                                 // **********
-    //     var x0 = x.invert(d3.mouse(this)[0]),              // **********
-    //         i = bisectData(data, x0, 1),                   // **********
-    //         d0 = data[i - 1],                              // **********
-    //         d1 = data[i],                                  // **********
-    //         d = x0 - d0.date > d1.date - x0 ? d1 : d0;     // **********
-
-    //     focus.select("circle.y")                           // **********
-    //         .attr("transform",                             // **********
-    //               "translate(" + x(d.date) + "," +         // **********
-    //                              y(d.close) + ")");        // **********
-    // }  
 
     document.getElementById('line-year').addEventListener('change', populateLineChartWithData, false);
     
     function populateLineChartWithData() {
-      lineGraph.transition().attr("d", lineFunction(data[this.value]));
-      console.log(circles, data[this.value]);
-      circles.attr("d", data[this.value]).attr("cy", function(d, i) { console.log(d, yScale(d));return yScale(d); });
+      lineGraph.transition().duration(1200).ease('elastic').attr("d", lineFunction(data[this.value]));
+      circles.data(data[parseInt(this.value)]).transition().ease('back').duration(750).delay(function(d, i) { return i * 45; })
+              .attr("cy", function(d, i) { return yScale(d); }).attr("data-title", function(d, i) { return "Week: " + i + ", Sub: " + d; });
+      ctooltip.style('display', 'none');
   	}
 
 }

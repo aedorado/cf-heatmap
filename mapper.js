@@ -1,5 +1,6 @@
 var results;
 var user;
+var sentname, gotname;
 
 function apicall(username) {
     var success = false;
@@ -15,10 +16,13 @@ function apicall(username) {
     xhttp.onreadystatechange = function() {
       if (xhttp.readyState == 4 && xhttp.status == 200) {
           if ((JSON.parse(xhttp.responseText)).status === "OK") {
-                success = true;
-                results = (JSON.parse(xhttp.responseText)).result;
-                process(results);
-                linechart(results);
+                gotname = username;
+                if (sentname == gotname) {
+                    success = true;
+                    results = (JSON.parse(xhttp.responseText)).result;
+                    process(results);
+                    linechart(results);
+                }
           } else if (xhttp.status == 400) {
               document.getElementById('heat-map-div').innerHTML = 'Call failed.';
           }
@@ -26,12 +30,13 @@ function apicall(username) {
     };
     xhttp.open("GET", url, true);
     xhttp.send();
+    sentname = username;
     setTimeout(function() {
         if (!success) {
             // document.getElementById('loading-gif').style.display = 'none';
             document.getElementById('heat-map-div').innerHTML = 'Request is taking too long. Either the handle is invalid or the connection is slow.';
         }
-    }, 16000);
+    }, 18000);
 }
 
 function process(results) {
@@ -166,7 +171,6 @@ function mapdata(count, minYear, maxYear) {
 
     d3.selectAll('rect').on('mouseover', function(d) {
             if (this.getAttribute('data-title') != null) {
-
                 tooltip.style('display', 'block');
                 tooltip.html(this.getAttribute('data-title'))
                     .style('left', (d3.event.pageX + 5) + 'px')
