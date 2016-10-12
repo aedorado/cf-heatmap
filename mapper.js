@@ -2,15 +2,40 @@ var results;
 var user;
 var sentname, gotname;
 
+function checkIfUserExsist(userName, reqType, asyncProc){
+  var finished = false;
+  var urlCheckingForUser = 'http://codeforces.com/api/user.info?handles=' + userName;
+
+  var r = window.XMLHttpRequest ? new XMLHttpRequest() : new ActiveXObject("Microsoft.XMLHTTP");
+   if (asyncProc)
+      r.onreadystatechange = function () {
+          if (this.readyState == 4) asyncProc(this);
+      };
+   //else //enable this if you want to set a timevalue for reques. DEPRECATED
+   //     r.timeout = 4000;  // Reduce default 2mn-like timeout to 4 s if synchronous
+   r.open(reqType, urlCheckingForUser, !(!asyncProc));
+   r.send();
+   return r;
+}
+
 function apicall(username) {
     var success = false;
     user = username
+
+    var request = checkIfUserExsist(user, "GET", false); //true for async
+    if((JSON.parse(request.responseText)).status !== "OK")
+    {
+      document.getElementById('heat-map-div').innerHTML = 'User is not exist.';
+      return;
+    }
+
     window.location.hash = '#' + user;
     document.getElementById('loading-gif').style.display = 'inline';
     document.getElementById('heat-map-div').innerHTML = '';
     document.getElementById('linechart-div').innerHTML = '';
     document.getElementById('line-year').innerHTML = '';
     document.getElementById('stats').innerHTML = '';
+
     var url = 'http://codeforces.com/api/user.status?handle=' + user;
     var xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function() {
@@ -204,7 +229,7 @@ function getStats(data) {
     stats['maxsub'] = Math.max.apply(stats['maxsub'], Object.keys(data).map(function(e) {
         return data[e];
     }));
-    
+
     stats['sum'] = 0;
     for (key in data) {
         stats['sum'] += data[key];
