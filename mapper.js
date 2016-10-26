@@ -14,8 +14,8 @@ function apicall(username) {
     var url = 'http://codeforces.com/api/user.status?handle=' + user;
     var xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function() {
-      if (xhttp.readyState == 4 && xhttp.status == 200) {
-          if ((JSON.parse(xhttp.responseText)).status === "OK") {
+      if (xhttp.readyState == 4) {
+          if (xhttp.status == 200 && (JSON.parse(xhttp.responseText)).status === "OK") {
                 gotname = username;
                 if (sentname == gotname) {
                     success = true;
@@ -24,7 +24,7 @@ function apicall(username) {
                     linechart(results);
                 }
           } else if (xhttp.status == 400) {
-              document.getElementById('heat-map-div').innerHTML = 'Call failed.';
+              document.getElementById('heat-map-div').innerHTML = 'Call failed. ' + (JSON.parse(xhttp.responseText)).comment;
           }
       }
     };
