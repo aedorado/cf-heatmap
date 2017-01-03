@@ -60,7 +60,9 @@ function weekifyData(results, type='') {
         var op = document.createElement('option');
         op.setAttribute('value', year);
         op.appendChild(document.createTextNode(year));
-        document.getElementById('line-year').appendChild(op);
+        var yearDropDown = document.getElementById('line-year');
+        yearDropDown.insertBefore(op, yearDropDown.firstChild);
+        yearDropDown.selectedIndex = 0;
     }
 
     var count = [];
@@ -78,5 +80,8 @@ function weekifyData(results, type='') {
             // count[year + '' + week] = (count[year + '' + week] + 1) || 1;
         }
     });
+
+
+
     return count;
 }

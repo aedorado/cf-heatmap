@@ -36,9 +36,10 @@ function createLCStructure(data) {
                     .interpolate("linear");
 
   var svgGroup = linesvg.append('g').attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
-    						
+
   lineGraph = svgGroup.append("path")
-                        .attr("d", lineFunction(data[new Date().getUTCFullYear()]))
+                        // .attr("d", lineFunction()
+                        .attr("d", lineFunction(data[Object.keys(data)[0]]))
                         .attr("stroke", "#000")
                         .attr("stroke-width", 3)
                         .attr("fill", "none");
@@ -56,7 +57,7 @@ function createLCStructure(data) {
                   .attr('class', 'tooltip');
 
   var circles = svgGroup.selectAll("circle")                                    
-          .data(data[new Date().getUTCFullYear()])
+          .data(data[Object.keys(data)[0]])
           .enter().append("circle")                            
           .attr("r", 4)
           .attr("z-index", 100)
