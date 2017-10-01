@@ -2,6 +2,25 @@ var results;
 var user;
 var sentname, gotname;
 
+function checkUser(user, cb) {
+    var url = 'http://codeforces.com/api/user.info?handles=' + user;
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+      if (xhttp.readyState == 4 && xhttp.status == 200) {
+          var response = JSON.parse(xhttp.responseText); 
+          if (response.status === "OK") {
+            cb();
+          } else if (response.status === "FAILED"){
+            document.getElementById('heat-map-div').innerHTML = response.comment;
+          } else if (xhttp.status == 400) {
+              document.getElementById('heat-map-div').innerHTML = 'Call failed.';
+          }
+      }
+    };
+    xhttp.open("GET", url, true);
+    xhttp.send();
+}
+
 function apicall(username) {
     var success = false;
     user = username
@@ -11,32 +30,34 @@ function apicall(username) {
     document.getElementById('linechart-div').innerHTML = '';
     document.getElementById('line-year').innerHTML = '';
     document.getElementById('stats').innerHTML = '';
-    var url = 'http://codeforces.com/api/user.status?handle=' + user;
-    var xhttp = new XMLHttpRequest();
-    xhttp.onreadystatechange = function() {
-      if (xhttp.readyState == 4 && xhttp.status == 200) {
-          if ((JSON.parse(xhttp.responseText)).status === "OK") {
-                gotname = username;
-                if (sentname == gotname) {
-                    success = true;
-                    results = (JSON.parse(xhttp.responseText)).result;
-                    process(results);
-                    linechart(results);
-                }
-          } else if (xhttp.status == 400) {
-              document.getElementById('heat-map-div').innerHTML = 'Call failed.';
+    checkUser(user, function() {
+        var url = 'http://codeforces.com/api/user.status?handle=' + user;
+        var xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function() {
+          if (xhttp.readyState == 4 && xhttp.status == 200) {
+              if ((JSON.parse(xhttp.responseText)).status === "OK") {
+                    gotname = username;
+                    if (sentname == gotname) {
+                        success = true;
+                        results = (JSON.parse(xhttp.responseText)).result;
+                        process(results);
+                        linechart(results);
+                    }
+              } else if (xhttp.status == 400) {
+                  document.getElementById('heat-map-div').innerHTML = 'Call failed.';
+              }
           }
-      }
-    };
-    xhttp.open("GET", url, true);
-    xhttp.send();
-    sentname = username;
-    setTimeout(function() {
-        if (!success) {
-            // document.getElementById('loading-gif').style.display = 'none';
-            document.getElementById('heat-map-div').innerHTML = 'Request is taking too long. Either the handle is invalid or the connection is slow.';
-        }
-    }, 18000);
+        };
+        xhttp.open("GET", url, true);
+        xhttp.send();
+        sentname = username;
+        setTimeout(function() {
+            if (!success) {
+                // document.getElementById('loading-gif').style.display = 'none';
+                document.getElementById('heat-map-div').innerHTML = 'Request is taking too long. Either the handle is invalid or the connection is slow.';
+            }
+        }, 18000);
+    })
 }
 
 function process(results) {
